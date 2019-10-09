@@ -182,7 +182,7 @@ echo "HOSTS=$HOSTS"
 echo "HOSTNAME=$HOSTNAME"
 echo "获取本机IP地址=$NEW_IP"
 #安装控件
-yum install -y net-tools tree zip unzip git
+yum install -y net-tools tree zip unzip git expect
 #
 echo "========================================================================="
 echo "=========                   5.安装相关组件                          ======"
@@ -371,8 +371,8 @@ supervisord -c $SUPER_PATH
 mkdir -p /var/log/nginx
 touch /var/log/nginx/opsmanage_access.log
 sed -i 's/\<listen       80;\>/listen       80;/g' $NGINX_PATH/conf/nginx.conf
-sed -i '/server_name  localhost;/a\        access_log \/var\/log\/nginx\/opsmanage_access.log;\n        error_log \/var\/log\/nginx\/opsmanage_error.log;' $NGINX_PATH/conf/nginx.conf
-sed -i '/index  index.html index.htm;/a\            proxy_next_upstream off;\n            proxy_set_header    X-Real-IP           $remote_addr;\n            proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;\n            proxy_set_header    Host                $host;\n            proxy_http_version 1.1;\n            proxy_set_header Upgrade $http_upgrade;\n            proxy_set_header Connection "upgrade";\n            proxy_pass http:\/\/\'$NEW_IP':8000$request_uri;' $NGINX_PATH/conf/nginx.conf
+sed -i '0,/server_name  localhost;/a\        access_log \/var\/log\/nginx\/opsmanage_access.log;\n        error_log \/var\/log\/nginx\/opsmanage_error.log;' $NGINX_PATH/conf/nginx.conf
+sed -i '0,/index  index.html index.htm;/a\            proxy_next_upstream off;\n            proxy_set_header    X-Real-IP           $remote_addr;\n            proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;\n            proxy_set_header    Host                $host;\n            proxy_http_version 1.1;\n            proxy_set_header Upgrade $http_upgrade;\n            proxy_set_header Connection "upgrade";\n            proxy_pass http:\/\/\'$NEW_IP':8000$request_uri;' $NGINX_PATH/conf/nginx.conf
 sed -i '/deny  all;/a\        location \/static {\n         expires 30d;\n         autoindex on;\n         add_header Cache-Control private;\n         alias \/mnt\/OpsManage\/static\/;\n      }\n' $NGINX_PATH/conf/nginx.conf
 $NGINX_PATH/sbin/nginx -s reload
 #
