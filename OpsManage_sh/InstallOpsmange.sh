@@ -282,16 +282,16 @@ $PYTHON_PATH/bin/python3 manage.py makemigrations sched
 $PYTHON_PATH/bin/python3 manage.py makemigrations apply
 $PYTHON_PATH/bin/python3 manage.py migrate
 #
-$PYTHON_PATH/bin/python3 manage.py createsuperuser
-set timeout 30
 /usr/bin/expect <<-EOF
+set timeout 30
+spawn $PYTHON_PATH/bin/python3 manage.py createsuperuser
 expect {
-"Username*" { send "$_user_\n" }
-"Email*" { send "$_email_\n" }
-"Password*" { send "$_passwd_\n" }
-"Username*" { send "$_user_\n" }
+"Username*" { send "$_user_\n",exp_continue }
+"Email*" { send "$_email_\n",exp_continue }
+"Password*" { send "$_passwd_\n",exp_continue }
+"Bypass password*" { send "y\n" }
 }
-expect eof
+expect eof;
 EOF
 # 如果出现错误ImportError: cannot import name 'LDAPError'
 # pip3 uninstall python-ldap
